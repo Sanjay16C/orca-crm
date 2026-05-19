@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Navigate } from "react-router-dom";
+
 const api = axios.create({
     baseURL : process.env.REACT_APP_API_URL
 });

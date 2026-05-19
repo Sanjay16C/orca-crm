@@ -6,7 +6,6 @@ import { NavLink,Outlet,useLocation } from "react-router-dom";
 import { useState } from "react";
 
 const Home = () => {
-    const [Active,setActive] = useState("Customers");
     const location = useLocation();
     const currentPage = location.pathname.split("/")[2] || "customers";
     const [sidebaropen,setSidebarOpen] = useState(true);
@@ -66,10 +65,10 @@ const Home = () => {
                         </div>
                         <div className="nav-right">
                             <button className="userprofile-btn">
-                                <img className="userprofile-img" src={userprofile} />
+                                <img className="userprofile-img" src={userprofile} alt="profile" />
                             </button>
                             <button className="logout-btn">
-                                <img className="logout-img" src={logout} />
+                                <img className="logout-img" src={logout} alt="logout" />
                             </button>
                         </div>
                         

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios.js";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./Notes.css"
 const Notes = () => {
     const [customer,setCustomer] = useState({});

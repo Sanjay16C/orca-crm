@@ -25,12 +25,12 @@ const Signup = () => {
             <div className="body">
                 <div className="left-side">
                         <div className="animation">
-                            <Lottie animationData={signupAnimation} loop={true} />
+                            <Lottie animationData={signupAnimation} loop={true} alt="signup animation" />
                         </div>
                 </div>
                 <div className="right-side">
                     <div className="signup">
-                        <img src={logo} />
+                        <img src={logo} alt="logo" />
                         <h1 id="header">Get Started !</h1>
                         <h2>Enter Username</h2>
                         <input 

@@ -77,7 +77,7 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
                                         <button
                                             className="icon-btn"
                                         >
-                                            <img src={phone} />
+                                            <img src={phone} alt="phone" />
                                         </button>
                                     </a>
                                 </div>
@@ -90,7 +90,7 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
                                     className="icon-btn"
                                     onClick={()=>handleInfo(customer._id)}
                                 >
-                                    <img src={info} />
+                                    <img src={info} alt="info" />
                                 </button>
                             </td>
                             <td>{customer.assignedTo?.username}</td>
@@ -113,13 +113,13 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
                                         }
                                         }
                                     >
-                                        <img src={edit} />
+                                        <img src={edit} alt="edit" />
                                     </button>
                                     <button
                                         className="icon-btn"
                                         onClick={()=>handleDelete(customer._id)}
                                     >
-                                        <img src={bin} />
+                                        <img src={bin} alt="delete" />
                                     </button>
                                     </div>
                                     

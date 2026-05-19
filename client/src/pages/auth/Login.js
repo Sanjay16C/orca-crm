@@ -25,12 +25,12 @@ const Login = () => {
         <div className="body">
             <div className="left-side">
                 <div className="animation">
-                    <Lottie animationData={LoginAnimation} loop={true} />
+                    <Lottie animationData={LoginAnimation} loop={true} alt="login animation" />
                 </div>
                 
             </div>
             <div className="right-side">
-                <img src={logo}/>
+                <img src={logo} alt="logo" />
                 <h2 id="header">Welcome Back !</h2>
                 <div className="login">
                     <h2>Enter Email</h2>
