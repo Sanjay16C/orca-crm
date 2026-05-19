@@ -1,0 +1,73 @@
+.table{
+    width: 100%;
+}
+
+.table-container{
+    overflow-y: auto;
+    max-height: 80vh;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: white;
+    border-radius: 12px;
+}
+
+table{
+    width:100%;
+    border-collapse: collapse;
+}
+
+th{
+    top: 0;
+    position: sticky;
+    border-bottom: 1px solid #e5e7eb;
+    background-color: rgb(255, 81, 0);
+    color: white;
+    padding : 20px;
+    text-align: left;
+    vertical-align:middle;
+    font-weight: 600;
+    z-index: 1;
+}
+
+td{
+    border-bottom: 1px solid #e5e7eb;
+    padding:15px;
+    background-color: transparent;
+    text-align:left;
+    vertical-align:middle;
+}
+
+tbody tr{
+    height:64px;
+}
+
+tbody tr:hover{
+    background-color:#f9fafb;
+}
+
+.table-container table button{
+    margin : 0;
+}
+
+.option-btn{
+    display: flex;
+    gap:30px;
+}
+
+.phone-field{
+    display: flex;
+    gap:10px;
+    align-items: center;
+}
+
+.icon-btn{
+    background-color: white;
+    border-radius: 25px;
+    border: none;
+}
+
+.icon-btn img{
+    width:30px;
+    height:30px;   
+}

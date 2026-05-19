@@ -1,0 +1,141 @@
+.logo-img{
+    width:13vh;
+    height:11vh;
+    object-fit:contain;
+    margin-top: 10px;
+}
+
+.hamburger{
+    margin: 0;
+    width:10vh;
+    height:8vh;
+    font-size:28px;
+    line-height:1;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background-color:transparent;
+    border:none;
+    color:white;
+}
+
+.sidebar-close button{
+    height: 8vh;
+    background-color: rgb(255, 255, 255);
+    color: black;
+    margin: 0;
+    width: 10vh;
+    border: none;
+}
+
+.logo{
+    display:flex;
+    flex-direction: row;
+    align-items:center;
+    height:8vh;
+}
+
+.home{
+    display: flex;
+    flex-direction: row;
+}
+
+.navbar{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    padding-left: 24px;
+    padding-right: 20px;
+    height: 8vh;
+}
+
+.nav-right{
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap:24px;
+}
+
+.nav-left{
+    margin:0;
+    font-size: 30px;
+    font-weight: 600;
+}
+
+.logout-btn{
+    border: none;
+    box-shadow: none;
+    background-color: white;
+}
+
+.logout-img{
+    width: 35px;
+    height: 35px;
+    border: none;
+    box-shadow: none;
+}
+.userprofile-btn{
+    border: none;
+    box-shadow: none;
+    background-color: white;
+}
+.userprofile-img{
+    width:55px;
+    height: 55px;
+    border-radius: 30px;
+    border: 2px solid rgb(255, 81, 0);
+    box-shadow: none;
+}
+
+.sidebar{
+    background-color: rgb(255, 81, 0);
+    gap:20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width:240px;
+    transition: 0.3s ease;
+    overflow: hidden;
+}
+
+.sidebar-close{
+    width:72px;
+    transition: 0.3s ease;
+}
+
+.main{
+    display: flex;
+    flex:1;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.sidebarbtn{
+    margin: 0;
+    font-size: 3vh;
+    border: none;
+    background-color:rgb(255, 81, 0) ;
+    color: white;
+    text-decoration:none;
+    width: 13vh;
+    padding: 20px;
+}
+
+.sidebarbtn-active{
+    margin:0;
+    font-size: 3vh;
+    color:rgb(255, 81, 0);
+    border: none;
+    width: 18vh;
+    background-color:rgb(255, 255, 255) ;
+    text-decoration:none;
+    padding: 20px;
+}
+
+
+
+
