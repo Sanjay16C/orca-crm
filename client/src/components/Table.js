@@ -20,9 +20,10 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
             console.log(error.message);
         }
     }
-    useEffect(()=>{
+    useEffect(() => {
         fetchdata();
-    },[]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const handleDelete = async(id) =>{
         try {
             const confirmDelete = window.confirm(

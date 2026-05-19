@@ -61,9 +61,10 @@ const Notes = () => {
     const handleBack = () =>{
         navigate("/home");
     }
-    useEffect(()=>{
-        fetchOneCustomer();
-    },[])
+    useEffect(() => {
+    fetchOneCustomer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return ( 
         <div className="notes">
