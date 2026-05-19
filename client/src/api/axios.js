@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 const api = axios.create({
-    baseURL : "http://localhost:8000"
+    baseURL : process.env.REACT_APP_API_URL
 });
 
 api.interceptors.request.use((req)=>{
