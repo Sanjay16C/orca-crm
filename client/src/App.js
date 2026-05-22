@@ -14,6 +14,15 @@ import Analytics from './pages/Analytics.js';
 import Settings from './pages/Settings.js';
 
 function App() {
+
+  const isMobile = window.innerWidth < 768;
+  if(isMobile) return (
+    <div className="mobile-warning">
+      <h1>Oops ...</h1>
+      <p>Orca CRM is a Desktop Only Software.</p>
+      <p>It is not compatible on this device.</p>
+    </div>
+  );
   
   return (
     <Router>
