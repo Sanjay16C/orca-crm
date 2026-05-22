@@ -2,10 +2,18 @@ import "./Home.css";
 import logo from "../assets/logo/logo-white.png";
 import logout from "../assets/app-icons/logout.png";
 import userprofile from "../assets/spider.png";
-import { NavLink,Outlet,useLocation } from "react-router-dom";
+import { NavLink,Outlet,useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 const Home = () => {
+    const navigate = useNavigate();
+    const handleLogout = () =>{
+        const isConfirm = window.confirm("Click OK to Logout");
+        if(isConfirm){
+            localStorage.removeItem("token");
+            navigate("/");
+        }
+    }
     const location = useLocation();
     const currentPage = location.pathname.split("/")[2] || "customers";
     const [sidebaropen,setSidebarOpen] = useState(true);
@@ -67,7 +75,9 @@ const Home = () => {
                             <button className="userprofile-btn">
                                 <img className="userprofile-img" src={userprofile} alt="profile" />
                             </button>
-                            <button className="logout-btn">
+                            <button className="logout-btn"
+                                onClick={()=>handleLogout()}
+                            >
                                 <img className="logout-img" src={logout} alt="logout" />
                             </button>
                         </div>
