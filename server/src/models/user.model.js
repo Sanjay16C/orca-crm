@@ -17,7 +17,8 @@ const UserSchema = new Schema(
             required : true,
             min : 5,
             max : 15
-        }
+        },
+        refreshToken : {type : String }
     },
     {
         timestamps:true

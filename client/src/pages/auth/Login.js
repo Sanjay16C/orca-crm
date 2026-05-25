@@ -15,7 +15,7 @@ const Login = () => {
     const handleLogin = async() =>{
         try {
             const response = await api.post("/auth/login",{email,password});
-            localStorage.setItem("token",response.data.token);
+            localStorage.setItem("accessToken",response.data.accessToken);
             navigate("/home");
         } catch (error) {
             console.log(error.response?.data || error.message);

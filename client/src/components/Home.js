@@ -4,14 +4,22 @@ import logout from "../assets/app-icons/logout.png";
 import userprofile from "../assets/spider.png";
 import { NavLink,Outlet,useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import api from "../api/axios.js";
 
 const Home = () => {
     const navigate = useNavigate();
-    const handleLogout = () =>{
+    const handleLogout = async() =>{
         const isConfirm = window.confirm("Click OK to Logout");
         if(isConfirm){
-            localStorage.removeItem("token");
-            navigate("/");
+            try {
+                await api.post("/auth/logout");
+            } catch (error) {
+                console.log(error);
+            } finally {
+                localStorage.removeItem("accessToken");
+                navigate("/");
+            }
+            
         }
     }
     const location = useLocation();
