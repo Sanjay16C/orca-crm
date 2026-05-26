@@ -8,17 +8,24 @@ import logo from "../../assets/logo/logo-white.png";
 const Login = () => {
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
+    const [errors,setErrors] = useState([]);
     const navigate = useNavigate();
     const onSignup = () =>{
         navigate("/signup");
     }
     const handleLogin = async() =>{
         try {
+            setErrors([]);
             const response = await api.post("/auth/login",{email,password});
             localStorage.setItem("accessToken",response.data.accessToken);
             navigate("/home");
         } catch (error) {
-            console.log(error.response?.data || error.message);
+            if(error.response?.data?.errors){
+                setErrors(error.response.data.errors);
+            }
+            else{
+                setErrors([{msg:error.response?.data?.message || "Something went wrong"}])
+            }
         }
     }
     return(
@@ -46,6 +53,11 @@ const Login = () => {
                         type="password"
                         onChange={(e)=>setPassword(e.target.value)}
                     />
+                    {
+                        errors.map((error,index)=>(
+                            <p key={index} className="error">{error.msg}</p>
+                        ))
+                    }
                     <div className="buttons">
                             <button id="btn"
                             onClick={()=>{
