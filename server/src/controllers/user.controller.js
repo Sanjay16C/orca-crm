@@ -1,6 +1,8 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import { sendMail } from "../utils/sendMail.js";
 
 const signup = async(req,res) => {
     try {
@@ -140,10 +142,63 @@ const logout = async(req,res) =>{
     }
 }
 
+const forgotPassword = async(req,res) =>{
+    try {
+        const {email} = req.body;
+        const user = await User.findOne({email});
+        if(!user) return res.status(404).json({
+            message : "User Not Found"
+        })
+        const token = crypto.randomBytes(32).toString("hex");
+        user.resetPasswordToken = token;
+        user.resetPasswordExpiry = Date.now() + 10*60*1000;
+        await user.save();
+        const resetTokenLink = `${process.env.ORIGIN_URL}/reset-password/${token}`;
+        await sendMail(email,"Password Reset",`Reset pass using:${resetTokenLink}`);
+        res.status(200).json({
+            message:"Reset Link mail sent"
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({
+            message : "Internal server error"
+        })
+    }
+}
+
+const resetPassword = async(req,res) =>{
+    try {
+        const {token} = req.params;
+        const {password} = req.body;
+        const user = await User.findOne({
+            resetPasswordToken : token,
+            resetPasswordExpiry : {$gt : Date.now()}
+        });
+        if(!user) return res.status(400).json({
+            message : "Invalid or Expired Token"
+        })
+        const hashed = await bcrypt.hash(password,10);
+        user.password = hashed;
+        user.resetPasswordToken = null;
+        user.resetPasswordExpiry = null;
+        await user.save();
+        res.status(200).json({
+            message : "Password reset successful"
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : "Internal server error"
+        })
+    }
+}
+
+
 export {
     signup,
     login,
     fetchUsers,
     refreshAccessToken,
-    logout
+    logout,
+    forgotPassword,
+    resetPassword
 }

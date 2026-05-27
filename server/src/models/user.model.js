@@ -18,7 +18,9 @@ const UserSchema = new Schema(
             min : 5,
             max : 15
         },
-        refreshToken : {type : String }
+        refreshToken : {type : String },
+        resetPasswordToken : {type : String},
+        resetPasswordExpiry : {type : Date}
     },
     {
         timestamps:true

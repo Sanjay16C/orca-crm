@@ -12,6 +12,8 @@ import Calendar from './pages/Calendar.js';
 import Team from './pages/Team.js';
 import Analytics from './pages/Analytics.js';
 import Settings from './pages/Settings.js';
+import ForgotPass from './pages/auth/ForgotPass.js';
+import ResetPass from './pages/auth/ResetPass.js';
 
 function App() {
 
@@ -30,6 +32,8 @@ function App() {
             <Switch>
                   <Route path="/" element={<Login/>} />
                   <Route path="/signup" element={<Signup/>} />
+                  <Route path="/forgot-password" element={<ForgotPass />} />
+                  <Route path="/reset-password/:token" element={<ResetPass/>} />
                   <Route path="/home" element={
                     <Protectedroute>
                         <Home/>

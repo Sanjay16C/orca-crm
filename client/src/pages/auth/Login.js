@@ -28,6 +28,7 @@ const Login = () => {
             }
         }
     }
+    
     return(
         <div className="body">
             <div className="left-side">
@@ -65,6 +66,12 @@ const Login = () => {
                             }
                             }
                             >Login →</button>
+                            <button id="btn"
+                            onClick={()=>{
+                                navigate("/forgot-password");
+                            }
+                            }
+                            >Forgot Password →</button>
                             <button id="btn"
                                 onClick={()=>onSignup()}
                             >Create new account</button>
