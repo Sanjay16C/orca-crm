@@ -20,7 +20,8 @@ const UserSchema = new Schema(
         },
         refreshToken : {type : String },
         resetPasswordToken : {type : String},
-        resetPasswordExpiry : {type : Date}
+        resetPasswordExpiry : {type : Date},
+        googleId : { type : String}
     },
     {
         timestamps:true

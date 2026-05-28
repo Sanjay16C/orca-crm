@@ -192,6 +192,28 @@ const resetPassword = async(req,res) =>{
     }
 }
 
+const googleCallback = async(req,res) =>{
+    const accessToken = jwt.sign(
+        {id:req.user.id},
+        process.env.JWT_SECRET,
+        {expiresIn:"10m"}
+    )
+    const refreshToken = jwt.sign(
+        {id:req.user.id},
+        process.env.REFRESH_SECRET,
+        {expiresIn:"7d"}
+    )
+    req.user.refreshToken = refreshToken;
+    await req.user.save();
+    res.cookie("refreshToken",refreshToken,{
+        httpOnly : true,
+        secure : process.env.NODE_ENV === "production",
+        sameSite : process.env.NODE_ENV === "production" ? "none" : "strict",
+        maxAge : 7*24*60*60*1000
+    });
+    res.redirect(`${process.env.ORIGIN_URL}/oauth-success?token=${accessToken}`);
+}
+
 
 export {
     signup,
@@ -200,5 +222,6 @@ export {
     refreshAccessToken,
     logout,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    googleCallback
 }

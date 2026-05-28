@@ -75,15 +75,16 @@ const Login = () => {
                             <button id="btn"
                                 onClick={()=>onSignup()}
                             >Create new account</button>
-                            
+                            <button id="btn"
+                                onClick={()=>{
+                                    window.location.href=`${process.env.REACT_APP_API_URL}/auth/google`
+                                }}
+                            >Continue with Google</button>
                     </div>
-                    
                 </div>
             </div>
-            
         </div>
-            
-     );
+    );
 }
  
 export default Login;
