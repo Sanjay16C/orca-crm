@@ -10,7 +10,7 @@ const OauthSuccess = () => {
             localStorage.setItem("accessToken",token);
             navigate("/home");
         }
-    },[])
+    },[searchParams,navigate]);
     return ( 
         <div className="oauthsuccess">
             <h1>Logging in...</h1>
