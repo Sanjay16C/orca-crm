@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { sendMail } from "../utils/sendMail.js";
+import { Verification } from "../models/verification.model.js";
 
 const signup = async(req,res) => {
     try {
@@ -14,10 +15,15 @@ const signup = async(req,res) => {
         if(exists) return res.status(400).json({
             message : "User already exists"
         })
+        const verification = await Verification.findOne({email});
+        if(!verification?.verifiedMail) return res.status(400).json({
+            message : "Verify Mail first"
+        }) 
         const hashed = await bcrypt.hash(password,10);
         const user = await User.create({
             username , email , password : hashed
         })
+        await Verification.findOneAndDelete({email});
         res.status(201).json({
             message : "User Created!!", user : {
                 id : user._id , username , email
@@ -214,6 +220,68 @@ const googleCallback = async(req,res) =>{
     res.redirect(`${process.env.ORIGIN_URL}/oauth-success?token=${accessToken}`);
 }
 
+const verifyMail = async(req,res) =>{
+    try {
+        const {email} = req.body;
+        const token = crypto.randomBytes(32).toString("hex");
+        await Verification.findOneAndDelete({email});
+        await Verification.create({
+            email,
+            verifiedMail : false,
+            verifyMailToken : token,
+            verifyMailExpiry : Date.now()+2*60*1000
+        });
+        const verificationMailLink = `${process.env.ORIGIN_URL}/verify-mail/${token}`;
+        await sendMail(email,"Verify your mail",
+            `Verify your email by clicking the Link : ${verificationMailLink}`
+        );
+        res.status(200).json({
+            message : "Verification Mail Sent"
+        })
+    } catch (error){
+        console.log(error.message);
+        res.status(500).json({
+            message : "Internal server error"
+        });
+    }
+}
+
+const verifyMailToken = async(req,res) =>{
+    try {
+        const {token} = req.params;
+        const verification = await Verification.findOne({verifyMailToken:token,
+            verifyMailExpiry : {$gt:Date.now()}
+        });
+        if(!verification) return res.status(400).json({
+            message : "Token expired or invalid"
+        });
+        verification.verifiedMail = true;
+        await verification.save();
+        res.status(200).json({
+            message : "Email Verification successful"
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({
+            message : "Internal server error"
+        });
+    }
+}
+
+const verificationStatus = async(req,res) =>{
+    try {
+        const { email } = req.params;
+        const verification = await Verification.findOne({email});
+        res.json({
+            verified : verification?.verifiedMail || false
+        });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({
+            message : "Internal server error"
+        });
+    }
+}
 
 export {
     signup,
@@ -223,5 +291,8 @@ export {
     logout,
     forgotPassword,
     resetPassword,
-    googleCallback
+    googleCallback,
+    verifyMail,
+    verifyMailToken,
+    verificationStatus
 }

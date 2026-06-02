@@ -15,6 +15,7 @@ import Settings from './pages/Settings.js';
 import ForgotPass from './pages/auth/ForgotPass.js';
 import ResetPass from './pages/auth/ResetPass.js';
 import OauthSuccess from './pages/auth/OauthSuccess.js';
+import VerifyMail from './pages/auth/verifyMail.js';
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
                   <Route path="/forgot-password" element={<ForgotPass />} />
                   <Route path="/reset-password/:token" element={<ResetPass/>} />
                   <Route path="/oauth-success" element={<OauthSuccess/>}/>
+                  <Route path="/verify-mail/:token" element={<VerifyMail />} />
                   <Route path="/home" element={
                     <Protectedroute>
                         <Home/>

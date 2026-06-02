@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { fetchUsers, forgotPassword, googleCallback, login, logout, refreshAccessToken, resetPassword, signup } from "../controllers/user.controller.js";
+import { fetchUsers, forgotPassword, googleCallback, login, logout, refreshAccessToken, resetPassword, signup, verificationStatus, verifyMail, verifyMailToken } from "../controllers/user.controller.js";
 import {authMiddleware} from "../middlewares/auth.middleware.js";
-import { loginValidation, signupValidation } from "../middlewares/validation.middleware.js";
+import { loginValidation, signupValidation, verifyMailValidation } from "../middlewares/validation.middleware.js";
 import passport from "passport";
 import { authLimiter } from "../middlewares/rateLimit.middleware.js";
 
@@ -22,5 +22,7 @@ userRouter.get(
     passport.authenticate("google",{session:false,failureRedirect:"/"}),
     googleCallback
 );
-
+userRouter.post("/verify-mail",verifyMailValidation,verifyMail);
+userRouter.get("/verify-mail/:token",verifyMailToken);
+userRouter.get("/verification-status/:email",verificationStatus);
 export default userRouter;

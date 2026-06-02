@@ -50,3 +50,19 @@ export const loginValidation = [
     }
 ];
     
+export const verifyMailValidation = [
+    body("email")
+    .trim()
+    .notEmpty()
+    .withMessage("Email should not be empty")
+    .isEmail()
+    .withMessage("Email is invalid"),
+    (req,res,next)=>{
+        const errors = validationResult(req);
+        if(!errors.isEmpty()) return res.status(400).json({
+            errors : errors.array()
+        })
+        next();
+    }
+
+];

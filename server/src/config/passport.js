@@ -22,7 +22,8 @@ passport.use(
                         googleId : profile.id,
                         username : profile.displayName,
                         email : profile.emails[0].value,
-                        password : crypto.randomBytes(32).toString("hex")
+                        password : crypto.randomBytes(32).toString("hex"),
+                        verifiedUser : true
                     })
                 }
                 done(null,user);
