@@ -16,6 +16,7 @@ import ForgotPass from './pages/auth/ForgotPass.js';
 import ResetPass from './pages/auth/ResetPass.js';
 import OauthSuccess from './pages/auth/OauthSuccess.js';
 import VerifyMail from './pages/auth/verifyMail.js';
+import Workspaces from './pages/Workspaces.js';
 
 function App() {
 
@@ -38,7 +39,12 @@ function App() {
                   <Route path="/reset-password/:token" element={<ResetPass/>} />
                   <Route path="/oauth-success" element={<OauthSuccess/>}/>
                   <Route path="/verify-mail/:token" element={<VerifyMail />} />
-                  <Route path="/home" element={
+                  <Route path="/workspaces" element={
+                    <Protectedroute>
+                      <Workspaces/>
+                    </Protectedroute>
+                  } />
+                  <Route path="/workspace/:workspaceId" element={
                     <Protectedroute>
                         <Home/>
                     </Protectedroute>

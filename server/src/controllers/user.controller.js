@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { sendMail } from "../utils/sendMail.js";
 import { Verification } from "../models/verification.model.js";
+import { WorkspaceMember } from "../models/workspaceMember.model.js";
 
 const signup = async(req,res) => {
     try {
@@ -76,11 +77,13 @@ const login = async(req,res) =>{
     }
 }
 
-const fetchUsers = async(req,res) =>{
+const fetchUsersInWorkspaces = async(req,res) =>{
     try {
-        const users = await User.find().select("-password -refreshToken");
-        return res.status(200).json({
-            message : "Users fetched successfully" , users
+        const {workspaceId} = req.params;
+        const members = await WorkspaceMember.find({workspace:workspaceId}).populate("user");
+        const users = members.map((member)=>member.user);
+        res.status(200).json({
+            users
         })
     } catch (error) {
         res.status(500).json({
@@ -286,7 +289,7 @@ const verificationStatus = async(req,res) =>{
 export {
     signup,
     login,
-    fetchUsers,
+    fetchUsersInWorkspaces,
     refreshAccessToken,
     logout,
     forgotPassword,

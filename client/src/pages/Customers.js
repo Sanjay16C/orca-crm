@@ -3,13 +3,15 @@ import Table from "../components/Table.js";
 import { useState,useEffect } from "react";
 import api from "../api/axios.js";
 import "./Customers.css";
+import { useParams } from "react-router-dom";
 const Customers = () => {
     const [modal,setModal] = useState(false);
     const [customer,setCustomer] = useState([]);
     const [users,setUsers] = useState([]);
+    const {workspaceId} = useParams();
         const fetchUsers = async() =>{
             try {
-            const response = await api.get("/auth/fetchusers"); 
+            const response = await api.get(`/auth/fetchusers/${workspaceId}`); 
             setUsers(response.data.users);
             } catch (error) {
                 console.log(error.message);
@@ -17,7 +19,7 @@ const Customers = () => {
         }
         useEffect(()=>{
             fetchUsers();
-        },[]);
+        },[workspaceId]);
     return ( 
         <div className="customers-page">
                 <div className="table-home">

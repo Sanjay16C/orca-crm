@@ -3,13 +3,14 @@ import { Cust } from "../models/cust.model.js";
 
 const addCustomer = async(req,res) => {
     try {
-        const {name,email,phone,company,priority,status,assignedTo,lastcontacted,nextFollowup} = req.body;
-        const exists = await Cust.findOne({email});
+        const {name,email,phone,company,priority,status,assignedTo,lastcontacted,nextFollowup,workspaceId} = req.body;
+        const exists = await Cust.findOne({email,workspace:workspaceId});
         if(exists) return res.status(400).json({
             message : "Duplicate Customer entry with same Email"
         }) 
         const cust = await Cust.create(
-            {name,email,phone,company,priority,status,assignedTo,lastcontacted,nextFollowup} 
+            {name,email,phone,company,priority
+                ,status,assignedTo,lastcontacted,nextFollowup,workspace:workspaceId} 
         );
         await cust.populate("assignedTo");
         res.status(201).json({
@@ -25,7 +26,8 @@ const addCustomer = async(req,res) => {
 
 const getAllCustomers = async(req,res) =>{
     try {
-        const customers = await Cust.find().populate("assignedTo");
+        const {workspaceId} = req.params;
+        const customers = await Cust.find({workspace:workspaceId}).populate("assignedTo");
         res.status(200).json({
             message : "Customer fetched!!" , customers
         });

@@ -1,3 +1,4 @@
+import { useParams } from "react-router-dom";
 import api from "../api/axios.js";
 import "./AddModal.css";
 import { useState } from "react";
@@ -11,9 +12,15 @@ const AddModal = ({setModal,setCustomer,customer,users,setUsers}) => {
     const [assignedTo,setAssignedTo] = useState("");
     const [lastcontacted,setLastcontacted] = useState("");
     const [nextFollowup,setnextFollowup] = useState("");
+    const {workspaceId} = useParams();
     const createCustomer = async() =>{
         try {
-            const response = await api.post("/customer/create",{name,email,phone,company,priority,status,assignedTo,lastcontacted,nextFollowup});
+            const response = await api.post(
+                "/customer/create",
+                {name,email,phone,company,priority
+                    ,status,assignedTo,
+                    lastcontacted,nextFollowup,workspaceId}
+            );
             setModal(false);
             setCustomer([...customer,response.data.cust]);
         } catch (error) {

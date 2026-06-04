@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { fetchUsers, forgotPassword, googleCallback, login, logout, refreshAccessToken, resetPassword, signup, verificationStatus, verifyMail, verifyMailToken } from "../controllers/user.controller.js";
+import { fetchUsersInWorkspaces, forgotPassword, googleCallback, login, logout, refreshAccessToken, resetPassword, signup, verificationStatus, verifyMail, verifyMailToken } from "../controllers/user.controller.js";
 import {authMiddleware} from "../middlewares/auth.middleware.js";
 import { loginValidation, signupValidation, verifyMailValidation } from "../middlewares/validation.middleware.js";
 import passport from "passport";
@@ -9,7 +9,7 @@ const userRouter = Router();
 
 userRouter.post("/login",authLimiter,loginValidation,login);
 userRouter.post("/signup",authLimiter,signupValidation,signup);
-userRouter.get("/fetchusers",authMiddleware,fetchUsers);
+userRouter.get("/fetchusers/:workspaceId",authMiddleware,fetchUsersInWorkspaces);
 userRouter.post("/refresh",refreshAccessToken);
 userRouter.post("/logout",logout);
 userRouter.post("/forgot-password",authLimiter,forgotPassword);
@@ -25,4 +25,5 @@ userRouter.get(
 userRouter.post("/verify-mail",verifyMailValidation,verifyMail);
 userRouter.get("/verify-mail/:token",verifyMailToken);
 userRouter.get("/verification-status/:email",verificationStatus);
+
 export default userRouter;

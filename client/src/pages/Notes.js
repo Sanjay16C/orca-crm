@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./Notes.css"
 const Notes = () => {
     const [customer,setCustomer] = useState({});
-    const {id} = useParams();
+    const {id,workspaceId} = useParams();
     const [title,setTitle] = useState("");
     const [content,setContent] = useState("");
     const [editId,setEditId] = useState(null);
@@ -59,7 +59,7 @@ const Notes = () => {
         setEditContent(note.content);
     }
     const handleBack = () =>{
-        navigate("/home");
+        navigate(`/workspace/${workspaceId}`);
     }
     useEffect(() => {
     fetchOneCustomer();

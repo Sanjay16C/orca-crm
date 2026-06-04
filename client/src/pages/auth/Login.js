@@ -18,7 +18,7 @@ const Login = () => {
             setErrors([]);
             const response = await api.post("/auth/login",{email,password});
             localStorage.setItem("accessToken",response.data.accessToken);
-            navigate("/home");
+            navigate("/workspaces");
         } catch (error) {
             if(error.response?.data?.errors){
                 setErrors(error.response.data.errors);

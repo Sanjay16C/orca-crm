@@ -23,7 +23,7 @@ const Home = () => {
         }
     }
     const location = useLocation();
-    const currentPage = location.pathname.split("/")[2] || "customers";
+    const currentPage = location.pathname.split("/")[3] || "customers";
     const [sidebaropen,setSidebarOpen] = useState(true);
     const sidebarList = [
     {
@@ -89,7 +89,7 @@ const Home = () => {
                                 <img className="logout-img" src={logout} alt="logout" />
                             </button>
                         </div>
-                        
+                    
                     </div>
                         <div className="page-content">
                             <Outlet />

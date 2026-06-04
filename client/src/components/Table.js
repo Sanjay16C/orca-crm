@@ -2,7 +2,7 @@ import { useEffect,useState } from "react";
 import api from "../api/axios.js";
 import "./Table.css";
 import EditModal from "./EditModal.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import phone from "../assets/app-icons/phone.png";
 import info from "../assets/app-icons/info.png";
 import edit from "../assets/app-icons/edit.png";
@@ -12,9 +12,10 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
     const [editModal,setEditModal] = useState(false);
     const [oneCust,setoneCust] = useState({});
     const navigate = useNavigate();
+    const {workspaceId} = useParams();
     const fetchdata = async() =>{
         try {
-        const response = await api.get("/customer/getall"); 
+        const response = await api.get(`/customer/getall/${workspaceId}`); 
         setCustomer(response.data.customers);
         } catch (error) {
             console.log(error.message);
@@ -37,7 +38,7 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
         }
     }
     const handleInfo = (id) =>{
-        navigate(`/home/customer/${id}/notes`);
+        navigate(`/workspace/${workspaceId}/customer/${id}/notes`);
     }
     
     

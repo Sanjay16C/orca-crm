@@ -11,8 +11,7 @@ const CustSchema = new Schema(
         },
         email : {
             type : String,
-            required : true,
-            unique:true
+            required : true
         },
         phone : {type : String},
         company : {type : String},
@@ -51,6 +50,11 @@ const CustSchema = new Schema(
         nextFollowup : {
             type:Date,
             default : null
+        },
+        workspace : {
+            type : Schema.Types.ObjectId,
+            ref : "Workspace",
+            required : true
         }
     },
     {

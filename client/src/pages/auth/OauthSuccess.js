@@ -8,7 +8,7 @@ const OauthSuccess = () => {
         const token = searchParams.get("token");
         if(token){
             localStorage.setItem("accessToken",token);
-            navigate("/home");
+            navigate("/workspaces");
         }
     },[searchParams,navigate]);
     return ( 
