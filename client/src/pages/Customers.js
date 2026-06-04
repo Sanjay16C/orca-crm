@@ -19,6 +19,7 @@ const Customers = () => {
         }
         useEffect(()=>{
             fetchUsers();
+            // eslint-disable-next-line
         },[workspaceId]);
     return ( 
         <div className="customers-page">
