@@ -1,0 +1,32 @@
+.team{
+    margin: 10px;
+}
+
+.role-btns{
+    display: flex;
+    flex-direction: row;
+}
+
+.role-btn-active{
+    width: fit-content;
+    margin:18px;
+    padding:10px;
+    font-size: 16px;
+    border: 1px solid rgb(0, 0, 0);
+    color : rgb(255,81,0);
+    background-color: white;
+    border-radius: 5px;
+    cursor:not-allowed;
+}
+
+.role-btn{
+    width: fit-content;
+    margin:18px;
+    padding:10px;
+    font-size: 16px;
+    border: 1px solid rgb(0, 0, 0);
+    color: rgba(0,0,0,0.5);
+    background-color: white;
+    border-radius: 5px;
+}
+

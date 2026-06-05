@@ -92,11 +92,34 @@ const joinWorkspace = async(req,res) =>{
     }
 }
 
-
+const updateRole = async(req,res) =>{
+    try {
+        const {role,userId,workspaceId} = req.body;
+        const membership = await WorkspaceMember.findOne(
+            {workspace:workspaceId,user:userId}
+        );
+        if(!membership){
+            return res.status(404).json({
+                message:"Member not found"
+            });
+        }
+        membership.role = role;
+        await membership.save();
+        res.status(200).json({
+            message : "Role Updated" , membership
+        })        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "Internal Server Error"
+        });
+    }
+}
 
 export{
     createWorkspace,
     getMyWorkspace,
     searchWorkspace,
-    joinWorkspace
+    joinWorkspace,
+    updateRole
 };

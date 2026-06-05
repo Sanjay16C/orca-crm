@@ -81,9 +81,8 @@ const fetchUsersInWorkspaces = async(req,res) =>{
     try {
         const {workspaceId} = req.params;
         const members = await WorkspaceMember.find({workspace:workspaceId}).populate("user");
-        const users = members.map((member)=>member.user);
         res.status(200).json({
-            users
+            members
         })
     } catch (error) {
         res.status(500).json({

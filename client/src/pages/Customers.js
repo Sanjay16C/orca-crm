@@ -9,18 +9,18 @@ const Customers = () => {
     const [customer,setCustomer] = useState([]);
     const [users,setUsers] = useState([]);
     const {workspaceId} = useParams();
-        const fetchUsers = async() =>{
-            try {
+    const fetchUsers = async() =>{
+        try {
             const response = await api.get(`/auth/fetchusers/${workspaceId}`); 
-            setUsers(response.data.users);
+            setUsers(response.data.members.map((member)=>member.user));
             } catch (error) {
                 console.log(error.message);
             }
         }
-        useEffect(()=>{
-            fetchUsers();
-            // eslint-disable-next-line
-        },[workspaceId]);
+    useEffect(()=>{
+        fetchUsers();
+        // eslint-disable-next-line
+    },[workspaceId]);
     return ( 
         <div className="customers-page">
                 <div className="table-home">
