@@ -11,7 +11,7 @@ const Customers = () => {
     const {workspaceId} = useParams();
     const fetchUsers = async() =>{
         try {
-            const response = await api.get(`/auth/fetchusers/${workspaceId}`); 
+            const response = await api.get(`/auth/fetchusers/${workspaceId}/users`); 
             setUsers(response.data.members.map((member)=>member.user));
             } catch (error) {
                 console.log(error.message);

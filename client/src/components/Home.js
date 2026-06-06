@@ -2,12 +2,14 @@ import "./Home.css";
 import logo from "../assets/logo/logo-white.png";
 import logout from "../assets/app-icons/logout.png";
 import userprofile from "../assets/spider.png";
-import { NavLink,Outlet,useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { NavLink,Outlet,useLocation, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import api from "../api/axios.js";
 
 const Home = () => {
     const navigate = useNavigate();
+    const {workspaceId} = useParams();
+    const [role,setRole] = useState("member");
     const handleLogout = async() =>{
         const isConfirm = window.confirm("Click OK to Logout");
         if(isConfirm){
@@ -20,6 +22,14 @@ const Home = () => {
                 navigate("/");
             }
             
+        }
+    }
+    const getMembership = async() =>{
+        try {
+            const response = await api.get(`/workspace/getMembership/${workspaceId}`);
+            setRole(response.data.role);
+        } catch (error) {
+            console.log(error);
         }
     }
     const location = useLocation();
@@ -50,7 +60,11 @@ const Home = () => {
         name:"Settings",
         path:"settings"
     }
-];
+    ];
+
+    useEffect(()=>{
+        getMembership();
+    },[workspaceId]);
     return (
         <div className="home">
             <div className={sidebaropen ? "sidebar" : "sidebar-close"}>
@@ -60,7 +74,9 @@ const Home = () => {
                                     >☰</button>
                                     {sidebaropen && <img src={logo} className="logo-img" alt="Logo"/>}
                             </div>
-                            {sidebaropen && sidebarList.map((li)=>(
+                            {sidebaropen && sidebarList
+                            .filter((li)=>!(li.path==="team" && role==="member"))
+                            .map((li)=>(
                                 <NavLink 
                                     key={li.name}
                                     to={li.path}

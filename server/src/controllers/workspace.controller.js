@@ -116,10 +116,29 @@ const updateRole = async(req,res) =>{
     }
 }
 
+const getMembership = async(req,res) =>{
+    try {
+        const {workspaceId} = req.params;
+        const membership = await WorkspaceMember.findOne({
+            user : req.user.id,
+            workspace : workspaceId
+        });
+        res.status(200).json({
+            role : membership.role
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "Internal Server Error"
+        });
+    }
+}
+
 export{
     createWorkspace,
     getMyWorkspace,
     searchWorkspace,
     joinWorkspace,
-    updateRole
+    updateRole,
+    getMembership
 };
