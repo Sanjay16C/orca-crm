@@ -10,10 +10,11 @@ const Notes = () => {
     const [editId,setEditId] = useState(null);
     const [editTitle,setEditTitle] = useState("");
     const [editContent,setEditContent] = useState("");
+    const [myRole,setMyRole] = useState("");
     const navigate = useNavigate();
     const fetchOneCustomer = async() =>{
         try {
-            const response = await api.get(`/customer/${id}`);
+            const response = await api.get(`/customer/${workspaceId}/${id}`);
             setCustomer(response.data.customer);
         } catch (error) {
             console.log(error?.response?.message || error.message);
@@ -21,7 +22,7 @@ const Notes = () => {
     }
     const handleAddNote = async() =>{
         try {
-            const response = await api.post(`/customer/${id}/notes`,{title,content});
+            const response = await api.post(`/customer/${id}/notes`,{title,content,workspaceId});
             setTitle("");
             setContent("");
             setCustomer(response.data.customer);
@@ -33,7 +34,8 @@ const Notes = () => {
         try {
             const response = await api.patch(`/customer/${id}/notes/${noteId}`,{
                 title : editTitle,
-                content : editContent
+                content : editContent,
+                workspaceId
             });
             setCustomer(response.data.customer);
             setEditId(null);
@@ -47,7 +49,7 @@ const Notes = () => {
                 "Delete this note?"
             );
             if(!confirmDelete) return;
-            const response = await api.delete(`/customer/${id}/notes/${noteId}`);
+            const response = await api.delete(`/customer/${workspaceId}/${id}/notes/${noteId}`);
             setCustomer(response.data.customer);
         } catch (error) {
             console.log(error?.response?.message || error.message);
@@ -61,8 +63,17 @@ const Notes = () => {
     const handleBack = () =>{
         navigate(`/workspace/${workspaceId}`);
     }
+    const fetchRole = async() =>{
+        try {
+            const response = await api.get(`/workspace/getMembership/${workspaceId}`);
+            setMyRole(response.data.role);
+        } catch (error) {
+            console.log(error);
+        }
+    }
     useEffect(() => {
     fetchOneCustomer();
+    fetchRole();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -97,9 +108,9 @@ const Notes = () => {
                 {
                     customer?.notes?.map((note)=>(
                         (editId === note._id)
-                        ? 
+                        ?
                         (
-                            <div className="editnote">
+                            <div className="editnote" key={note._id}>
                                 <input 
                                     placeholder={note.title}
                                     value={editTitle}
@@ -131,7 +142,7 @@ const Notes = () => {
                                 <p>{note.content}</p>
                                 <div className="stamp-options">
                                     <h4>{new Date(note.createdAt).toISOString().slice(0,16).replace('T'," ")}</h4>
-                                    <div className="note-options">
+                                    { myRole!=="member" && <div className="note-options">
                                         <button
                                             onClick={()=>startEdit(note)}
                                         >Edit</button>
@@ -139,7 +150,7 @@ const Notes = () => {
                                             onClick={()=>handleDeleteNote(note._id)}
                                         >Delete</button>
                                     </div>
-                                    
+                                    }
                                 </div>
                                 
                             </div>

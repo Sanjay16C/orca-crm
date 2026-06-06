@@ -42,8 +42,17 @@ const getAllCustomers = async(req,res) =>{
 const updateCustomer = async(req,res) =>{
     try {
         const id = req.params.id;
-        const customer  = await Cust.findByIdAndUpdate(
-            id,req.body,{returnDocument:"after"}).populate("assignedTo");
+        const customer  = await Cust.findOneAndUpdate(
+            {
+                _id : id,
+                workspace : req.body.workspaceId
+            }
+            ,req.body,{returnDocument:"after"}).populate("assignedTo");
+        if(!customer){
+            return res.status(404).json({
+                message:"Customer not found"
+            });
+        }
         res.status(200).json({
             message : "Updated successfully" , customer
         });
@@ -58,9 +67,12 @@ const updateCustomer = async(req,res) =>{
 
 const deleteCustomer = async(req,res) =>{
     try {
-        const id = req.params.id;
-        const deleted = await Cust.findByIdAndDelete(id);
-        if(!deleted) return res.status(400).json({
+        const {workspaceId,id} = req.params;
+        const deleted = await Cust.findOneAndDelete({
+            _id : id,
+            workspace : workspaceId
+        });
+        if(!deleted) return res.status(404).json({
             message : "Id is not Valid"
         })
         res.status(200).json({
@@ -76,8 +88,11 @@ const deleteCustomer = async(req,res) =>{
 
 const getOneCustomerForNotes = async(req,res)=>{
     try {
-        const id = req.params.id;
-        const customer = await Cust.findById(id);
+        const {id,workspaceId} = req.params;
+        const customer = await Cust.findOne({
+            _id:id,
+            workspace:workspaceId
+        });
         if(!customer) return res.status(404).json({
             message : "No Customer Found"
         })
@@ -94,13 +109,16 @@ const getOneCustomerForNotes = async(req,res)=>{
 
 const addNote = async(req,res) =>{
     try {
-        const {title,content} = req.body||{};
+        const {title,content,workspaceId} = req.body||{};
         if(!title || !content){
             return res.status(400).json({
                 message:"Title and content required"
             });
-}
-        const customer = await Cust.findById(req.params.id);
+        }
+        const customer = await Cust.findOne({
+            _id : req.params.id,
+            workspace : workspaceId
+        });
         if(!customer) return res.status(404).json({
             message : "Customer Not found"
         })
@@ -121,8 +139,11 @@ const addNote = async(req,res) =>{
 
 const deleteNote = async(req,res) =>{
     try {
-        const {custId,noteId} = req.params;
-        const customer = await Cust.findById(custId);
+        const {custId,noteId,workspaceId} = req.params;
+        const customer = await Cust.findOne({
+            _id : custId,
+            workspace : workspaceId
+        });
         if(!customer) return res.status(404).json({
             message : "Customer Not found"
         })
@@ -144,11 +165,13 @@ const deleteNote = async(req,res) =>{
     }
 }
 
-// url = /customer/:id/notes/:id
 const updateNote = async(req,res) =>{
     try {
         const {custId,noteId} = req.params || {};
-        const customer = await Cust.findById(custId);
+        const customer = await Cust.findOne({
+            _id : custId,
+            workspace : req.body.workspaceId
+        });
         if(!customer) return res.status(404).json({
             message : "Customer Not found"
         })
