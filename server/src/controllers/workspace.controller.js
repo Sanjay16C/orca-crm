@@ -2,6 +2,7 @@ import { Workspace } from "../models/workspace.model.js";
 import crypto from "crypto";
 import { User } from "../models/user.model.js";
 import { WorkspaceMember } from "../models/workspaceMember.model.js";
+import { Cust } from "../models/cust.model.js";
 
 const createWorkspace = async(req,res) =>{
     try {
@@ -175,6 +176,33 @@ const removeMember = async(req,res) =>{
     }
 }
 
+const deleteWorkspace = async(req,res) =>{
+    try {
+        const {workspaceId} = req.params;
+        const workspace = await Workspace.findById(workspaceId);
+        if(!workspace){
+            return res.status(404).json({
+                message : "Workspace does not exist"
+            });
+        }
+        await WorkspaceMember.deleteMany({
+            workspace : workspaceId
+        });
+        await Cust.deleteMany({
+            workspace : workspaceId
+        });
+        await Workspace.findByIdAndDelete(workspaceId);
+        res.status(200).json({
+            message : "Workspace deleted successfully"
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "Internal Server Error"
+        });
+    }
+}
+
 export{
     createWorkspace,
     getMyWorkspace,
@@ -182,5 +210,6 @@ export{
     joinWorkspace,
     updateRole,
     getMembership,
-    removeMember
+    removeMember,
+    deleteWorkspace
 };
