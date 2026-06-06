@@ -12,7 +12,7 @@ export const requireRole = (roles) =>{
                 if(!membership) return res.status(403).json({
                     message : "Not a member of this workspace"
                 })
-                console.log(roles.includes(membership.role));
+                
                 if(!roles.includes(membership.role)) return res.status(403).json({
                     message : "Permission Denied !!!"
                 })
