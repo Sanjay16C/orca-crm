@@ -13,6 +13,7 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
     const [oneCust,setoneCust] = useState({});
     const navigate = useNavigate();
     const {workspaceId} = useParams();
+    const [myRole,setMyRole] = useState("");
     const fetchdata = async() =>{
         try {
         const response = await api.get(`/customer/getall/${workspaceId}`); 
@@ -21,17 +22,27 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
             console.log(error.message);
         }
     }
+    const fetchRole = async() =>{
+        try {
+            const response = await api.get(`/workspace/getMembership/${workspaceId}`);
+            setMyRole(response.data.role);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    
     useEffect(() => {
         fetchdata();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        fetchRole();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [workspaceId]);
     const handleDelete = async(id) =>{
         try {
             const confirmDelete = window.confirm(
                 "Delete this customer?"
             );
             if(!confirmDelete) return;
-            await api.delete(`/customer/delete/${id}`);
+            await api.delete(`/customer/${workspaceId}/delete/${id}`);
             setCustomer((ele)=>ele.filter((cust)=>cust._id!==id));
         } catch (error) {
             console.log(error?.response || error.message);
@@ -63,7 +74,7 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
                         <th>Assigned to</th>
                         <th>Last Interaction</th>
                         <th>Follow Up</th>
-                        <th>Options</th>
+                        { myRole!=="member" &&<th>Options</th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -105,6 +116,7 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
                                     ? new Date(customer.nextFollowup).toISOString().slice(0,16).replace("T","@")
                                     :""
                                 }</td>
+                            { myRole!=="member" &&
                             <td>
                                     <div className="option-btn">
                                     <button
@@ -127,7 +139,7 @@ const Table = ({customer,setCustomer,users,setUsers}) => {
                                     
                                 
                             </td>
-                            
+                            }
                         </tr>
                     ))}
                     

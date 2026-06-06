@@ -74,7 +74,7 @@ const deleteCustomer = async(req,res) =>{
     }
 }
 
-const getOneCustomer = async(req,res)=>{
+const getOneCustomerForNotes = async(req,res)=>{
     try {
         const id = req.params.id;
         const customer = await Cust.findById(id);
@@ -176,7 +176,7 @@ export {
     getAllCustomers,
     updateCustomer,
     deleteCustomer,
-    getOneCustomer,
+    getOneCustomerForNotes,
     addNote,
     deleteNote,
     updateNote

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./EditModal.css";
 import api from "../api/axios.js";
+import { useParams } from "react-router-dom";
 
 const EditModal = ({EditModal,setEditModal,oneCust,customer,setCustomer,users,setUsers}) => {
     const [name,setName] = useState("");
@@ -12,6 +13,7 @@ const EditModal = ({EditModal,setEditModal,oneCust,customer,setCustomer,users,se
     const [assignedTo,setAssignedTo] = useState("");
     const [lastcontacted,setLastcontacted] = useState("");
     const [nextFollowup,setnextFollowup] = useState("");
+    const {workspaceId} = useParams();
     useEffect(()=>{
         if(oneCust){
             setName(oneCust.name||"");
@@ -35,7 +37,7 @@ const EditModal = ({EditModal,setEditModal,oneCust,customer,setCustomer,users,se
         try {
             const response = await api.patch(`/customer/update/${oneCust._id}`,
                 {name,email,phone,company,priority,
-                    status,assignedTo,lastcontacted,nextFollowup});
+                    status,assignedTo,lastcontacted,nextFollowup,workspaceId});
             setCustomer((ele)=>ele.map((cust)=>
                 cust._id===oneCust._id ? response.data.customer : cust
             ));
