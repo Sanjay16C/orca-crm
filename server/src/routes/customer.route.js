@@ -2,7 +2,6 @@ import { Router } from "express";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { addCustomer, addNote, deleteCustomer, deleteNote, getAllCustomers, getOneCustomer, updateCustomer, updateNote } from "../controllers/cust.controller.js";
 
-
 const custRouter = Router();
 
 custRouter.post("/create",authMiddleware,addCustomer);

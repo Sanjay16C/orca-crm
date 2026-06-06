@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createWorkspace, getMembership, getMyWorkspace, joinWorkspace, searchWorkspace, updateRole } from "../controllers/workspace.controller.js";
+import { createWorkspace, getMembership, getMyWorkspace, joinWorkspace, removeMember, searchWorkspace, updateRole } from "../controllers/workspace.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { requireRole } from "../middlewares/requireRole.middleware.js";
 
@@ -11,5 +11,6 @@ workspaceRouter.post("/search",authMiddleware,searchWorkspace);
 workspaceRouter.post("/join",authMiddleware,joinWorkspace);
 workspaceRouter.post("/update-role",authMiddleware,requireRole(["owner","admin"]),updateRole);
 workspaceRouter.get("/getMembership/:workspaceId",authMiddleware,getMembership);
+workspaceRouter.delete("/removeMember",authMiddleware,requireRole(["owner"]),removeMember);
 
 export default workspaceRouter;

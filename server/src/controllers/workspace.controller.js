@@ -111,6 +111,11 @@ const updateRole = async(req,res) =>{
             message : "Only owners can assign owners"
         })
         } 
+        if(membership.role==="owner" && membership.user.toString()===req.user.id){
+            return res.status(403).json({
+                message : "Owners cannot demote themselves"
+            });
+        }
         membership.role = role;
         await membership.save();
         res.status(200).json({
@@ -142,11 +147,40 @@ const getMembership = async(req,res) =>{
     }
 }
 
+const removeMember = async(req,res) =>{
+    try {
+        const {workspaceId,userId} = req.body;
+        const membership = await WorkspaceMember.findOne({
+            user : userId,
+            workspace : workspaceId
+        });
+        if(!membership){
+            return res.status(404).json({
+                message:"Member not found"
+            });
+        }
+        if(membership.role==="owner") return res.status(403).json({
+            message : "Owner cannot be removed"
+        })
+        await membership.deleteOne();
+        res.status(200).json({
+            message : "Removed Member successfully"
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "Internal Server Error"
+        });
+    }
+}
+
 export{
     createWorkspace,
     getMyWorkspace,
     searchWorkspace,
     joinWorkspace,
     updateRole,
-    getMembership
+    getMembership,
+    removeMember
 };
