@@ -103,10 +103,18 @@ const updateRole = async(req,res) =>{
                 message:"Member not found"
             });
         }
+        if(req.membership.role==="admin"){
+            if(membership.role==="owner") return res.status(403).json({
+                message : "Admins cannot modify owner roles"
+            })
+            if(role==="owner") return res.status(403).json({
+            message : "Only owners can assign owners"
+        })
+        } 
         membership.role = role;
         await membership.save();
         res.status(200).json({
-            message : "Role Updated" , membership
+            membership
         })        
     } catch (error) {
         console.log(error);

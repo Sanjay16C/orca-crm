@@ -19,15 +19,15 @@ const Team = () => {
     }
     const updateRole = async(role,userId) =>{
         try {
-            
-            await api.post("/workspace/update-role",{role,userId,workspaceId});
+            const response = await api.post("/workspace/update-role",{role,userId,workspaceId});
             setMembers((members)=>members.map(
                 (member)=>member.user._id===userId
                     ? {...member,role}
                     : member
-        ));
+            ));
         } catch (error) {
-            console.log(error);
+            console.log(error); 
+            alert(error.response?.data?.message);
         }
     }
     const fetchUsers = async() =>{
