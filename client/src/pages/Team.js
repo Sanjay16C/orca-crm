@@ -19,7 +19,7 @@ const Team = () => {
     }
     const updateRole = async(role,userId) =>{
         try {
-            const response = await api.post("/workspace/update-role",{role,userId,workspaceId});
+            await api.post("/workspace/update-role",{role,userId,workspaceId});
             setMembers((members)=>members.map(
                 (member)=>member.user._id===userId
                     ? {...member,role}
@@ -56,6 +56,11 @@ const Team = () => {
                             <th>Username</th>
                             <th>Email</th>
                             <th>Roles</th>
+                            { myRole === "owner" &&
+                                <th>
+                                    Remove users
+                                </th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -91,8 +96,12 @@ const Team = () => {
                                                 )}
                                             >Member</button>
                                         </div>
-                                        
                                     </td>
+                                    { myRole === "owner" &&
+                                        <td>
+                                            <button>Delete</button>
+                                        </td>
+                                    }
                                 </tr>
                             ))
                         }
