@@ -30,3 +30,18 @@
     border-radius: 5px;
 }
 
+.remove-btn{
+    width: fit-content;
+    margin:18px;
+    padding:10px;
+    font-size: 16px;
+    border: 1px solid rgb(0, 0, 0);
+    color : rgb(0, 0, 0);
+    background-color: white;
+    border-radius: 5px;
+}
+
+
+.remove-btn:hover{
+    color : rgb(255, 81, 0);
+}

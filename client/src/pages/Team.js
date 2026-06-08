@@ -115,9 +115,9 @@ const Team = () => {
                                     { myRole === "owner" &&
                                         member.role !== "owner" &&
                                         <td>
-                                            <button
+                                            <button className="remove-btn"
                                                 onClick={()=>removeMember(member.user._id)}
-                                            >Delete</button>
+                                            >Remove</button>
                                         </td>
                                     }
                                 </tr>
