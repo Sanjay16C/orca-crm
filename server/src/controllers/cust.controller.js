@@ -1,5 +1,5 @@
 import { Cust } from "../models/cust.model.js";
-
+import { redisClient } from "../config/redis.js";
 
 const addCustomer = async(req,res) => {
     try {
@@ -13,6 +13,7 @@ const addCustomer = async(req,res) => {
                 ,status,assignedTo,lastcontacted,nextFollowup,workspace:workspaceId} 
         );
         await cust.populate("assignedTo");
+        redisClient.del(`customers:${workspaceId}`);
         res.status(201).json({
             message : "New Customer Created !!!" , cust
         });
@@ -27,7 +28,17 @@ const addCustomer = async(req,res) => {
 const getAllCustomers = async(req,res) =>{
     try {
         const {workspaceId} = req.params;
+        const cachedCustomers = await redisClient.get(`customers:${workspaceId}`);
+        if(cachedCustomers){
+            console.log("Cache Hit !");
+            return res.status(200).json({
+                message : "Customers fetched from cache",
+                customers : JSON.parse(cachedCustomers)
+            })
+        }
+        console.log("Cache Miss !");
         const customers = await Cust.find({workspace:workspaceId}).populate("assignedTo");
+        await redisClient.set(`customers:${workspaceId}`,JSON.stringify(customers),{EX:60});
         res.status(200).json({
             message : "Customer fetched!!" , customers
         });
@@ -53,6 +64,7 @@ const updateCustomer = async(req,res) =>{
                 message:"Customer not found"
             });
         }
+        redisClient.del(`customers:${workspaceId}`);
         res.status(200).json({
             message : "Updated successfully" , customer
         });
@@ -75,6 +87,7 @@ const deleteCustomer = async(req,res) =>{
         if(!deleted) return res.status(404).json({
             message : "Id is not Valid"
         })
+        redisClient.del(`customers:${workspaceId}`);
         res.status(200).json({
             message : "Customer deleted!!" , deleted
         })
