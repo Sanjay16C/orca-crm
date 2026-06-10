@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { sendMail } from "../utils/sendMail.js";
 import { Verification } from "../models/verification.model.js";
 import { WorkspaceMember } from "../models/workspaceMember.model.js";
+import { redisClient } from "../config/redis.js";
 
 const signup = async(req,res) => {
     try {
@@ -80,7 +81,17 @@ const login = async(req,res) =>{
 const fetchUsersInWorkspaces = async(req,res) =>{
     try {
         const {workspaceId} = req.params;
+        const cachedUsers = await redisClient.get(`members:${workspaceId}`);
+        if(cachedUsers){
+            console.log("Members Cache Hit !");
+            return res.status(200).json({
+                message : "Users fetched from cache",
+                members : JSON.parse(cachedUsers)
+            })
+        }
+        console.log("Members Cache Miss !");
         const members = await WorkspaceMember.find({workspace:workspaceId}).populate("user");
+        await redisClient.set(`members:${workspaceId}`,JSON.stringify(members),{EX:60});
         res.status(200).json({
             members
         })

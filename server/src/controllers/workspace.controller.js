@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { User } from "../models/user.model.js";
 import { WorkspaceMember } from "../models/workspaceMember.model.js";
 import { Cust } from "../models/cust.model.js";
+import { redisClient } from "../config/redis.js";
 
 const createWorkspace = async(req,res) =>{
     try {
@@ -77,11 +78,22 @@ const joinWorkspace = async(req,res) =>{
     try {
         const {code} = req.body;
         const workspace = await Workspace.findOne({code});
+        if(!workspace) return res.status(404).json({
+            message : "Workspace Not Found"
+        })
+        const exists = await WorkspaceMember.findOne({
+            workspace : workspace._id,
+            user : req.user.id
+        });
+        if(exists) return res.status(400).json({
+            message : "Already a member"
+        })
         const workspaceMember = await WorkspaceMember.create({
             workspace : workspace._id,
             user : req.user.id,
             role : "member"
         });
+        await redisClient.del(`members:${workspace._id}`);
         res.status(200).json({
             message : "Joined Workspace" , workspaceMember
         })
@@ -119,6 +131,7 @@ const updateRole = async(req,res) =>{
         }
         membership.role = role;
         await membership.save();
+        await redisClient.del(`members:${workspaceId}`);
         res.status(200).json({
             membership
         })        
@@ -164,6 +177,7 @@ const removeMember = async(req,res) =>{
             message : "Owner cannot be removed"
         })
         await membership.deleteOne();
+        await redisClient.del(`members:${workspaceId}`);
         res.status(200).json({
             message : "Removed Member successfully"
         })
@@ -192,6 +206,8 @@ const deleteWorkspace = async(req,res) =>{
             workspace : workspaceId
         });
         await Workspace.findByIdAndDelete(workspaceId);
+        await redisClient.del(`members:${workspaceId}`);
+        await redisClient.del(`customers:${workspaceId}`);
         res.status(200).json({
             message : "Workspace deleted successfully"
         });

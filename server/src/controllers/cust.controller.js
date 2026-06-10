@@ -13,7 +13,7 @@ const addCustomer = async(req,res) => {
                 ,status,assignedTo,lastcontacted,nextFollowup,workspace:workspaceId} 
         );
         await cust.populate("assignedTo");
-        redisClient.del(`customers:${workspaceId}`);
+        await redisClient.del(`customers:${workspaceId}`);
         res.status(201).json({
             message : "New Customer Created !!!" , cust
         });
@@ -30,13 +30,13 @@ const getAllCustomers = async(req,res) =>{
         const {workspaceId} = req.params;
         const cachedCustomers = await redisClient.get(`customers:${workspaceId}`);
         if(cachedCustomers){
-            console.log("Cache Hit !");
+            console.log("Customer Cache Hit !");
             return res.status(200).json({
                 message : "Customers fetched from cache",
                 customers : JSON.parse(cachedCustomers)
             })
         }
-        console.log("Cache Miss !");
+        console.log("Customer Cache Miss !");
         const customers = await Cust.find({workspace:workspaceId}).populate("assignedTo");
         await redisClient.set(`customers:${workspaceId}`,JSON.stringify(customers),{EX:60});
         res.status(200).json({
@@ -64,7 +64,7 @@ const updateCustomer = async(req,res) =>{
                 message:"Customer not found"
             });
         }
-        redisClient.del(`customers:${workspaceId}`);
+        await redisClient.del(`customers:${req.body.workspaceId}`);
         res.status(200).json({
             message : "Updated successfully" , customer
         });
@@ -87,7 +87,7 @@ const deleteCustomer = async(req,res) =>{
         if(!deleted) return res.status(404).json({
             message : "Id is not Valid"
         })
-        redisClient.del(`customers:${workspaceId}`);
+        await redisClient.del(`customers:${workspaceId}`);
         res.status(200).json({
             message : "Customer deleted!!" , deleted
         })
@@ -139,6 +139,7 @@ const addNote = async(req,res) =>{
             title,content
         });
         await customer.save();
+        await redisClient.del(`customers:${workspaceId}`);
         res.status(201).json({
             message : "Notes created" , customer
         })
@@ -167,6 +168,7 @@ const deleteNote = async(req,res) =>{
         })
         note.deleteOne();
         await customer.save();
+        await redisClient.del(`customers:${workspaceId}`);
         res.status(200).json({
             message : "Note Deleted" , customer
         })
@@ -196,6 +198,7 @@ const updateNote = async(req,res) =>{
         note.title = title;
         note.content = content;
         await customer.save();
+        await redisClient.del(`customers:${req.body.workspaceId}`);
         res.status(200).json({
             message : "Note updated successfully" ,customer
         })
