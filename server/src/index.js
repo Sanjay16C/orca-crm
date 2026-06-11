@@ -1,5 +1,6 @@
 import app from "./app.js";
 import { connectDB } from "./config/database.js";
+import "../src/workers/followup.worker.js";
 import dotenv from "dotenv";
 dotenv.config({
     path : "./.env"

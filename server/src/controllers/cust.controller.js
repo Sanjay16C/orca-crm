@@ -1,5 +1,7 @@
 import { Cust } from "../models/cust.model.js";
 import { redisClient } from "../config/redis.js";
+import { followupQueue } from "../queues/followup.queue.js";
+import { Job } from "bullmq";
 
 const addCustomer = async(req,res) => {
     try {
@@ -14,6 +16,26 @@ const addCustomer = async(req,res) => {
         );
         await cust.populate("assignedTo");
         await redisClient.del(`customers:${workspaceId}`);
+        const delay = Math.max(0,new Date(nextFollowup).getTime() - Date.now());
+        const job = await followupQueue.add(
+            "customer followup",
+            {
+                customerId : cust._id,
+                customerName : cust.name,
+                assignedTo : cust.assignedTo._id,
+                customerPriority : cust.priority
+            },
+            {
+                delay,
+                attempts : 3,
+                backoff : {
+                    type : "exponential",
+                    delay : 5000
+                }
+            }
+        );
+        cust.nextFollowupJobId = job.id;
+        await cust.save();
         res.status(201).json({
             message : "New Customer Created !!!" , cust
         });
@@ -53,6 +75,19 @@ const getAllCustomers = async(req,res) =>{
 const updateCustomer = async(req,res) =>{
     try {
         const id = req.params.id;
+        const existingCustomer = await Cust.findOne({
+            _id : id,
+            workspace : req.body.workspaceId
+        })
+        if(!existingCustomer){
+            return res.status(404).json({
+                message:"Customer not found"
+            });
+        }
+        if(existingCustomer.nextFollowupJobId){
+            const oldJob  = await Job.fromId(followupQueue,existingCustomer.nextFollowupJobId);
+            if(oldJob) await oldJob.remove();
+        }
         const customer  = await Cust.findOneAndUpdate(
             {
                 _id : id,
@@ -65,6 +100,26 @@ const updateCustomer = async(req,res) =>{
             });
         }
         await redisClient.del(`customers:${req.body.workspaceId}`);
+        const delay = Math.max(0,new Date(customer.nextFollowup).getTime()-Date.now());
+        const job = await followupQueue.add(
+            "customer followup",
+            {
+                customerId : customer._id,
+                customerPriority : customer.priority,
+                customerName : customer.name,
+                assignedTo : customer.assignedTo._id
+            },
+            {
+                delay,
+                attempts : 3,
+                backoff : {
+                    type : "exponential",
+                    delay : 5000
+                }
+            }
+        );
+        customer.nextFollowupJobId = job.id;
+        await customer.save();
         res.status(200).json({
             message : "Updated successfully" , customer
         });
@@ -80,6 +135,17 @@ const updateCustomer = async(req,res) =>{
 const deleteCustomer = async(req,res) =>{
     try {
         const {workspaceId,id} = req.params;
+        const customer = await Cust.findOne({
+            _id : id,
+            workspace : workspaceId
+        });
+        if(!customer) return res.status(404).json({
+            message : "Customer Not Found"
+        });
+        if(customer.nextFollowupJobId){
+            const oldJob = await Job.fromId(followupQueue,customer.nextFollowupJobId);
+            if(oldJob) await oldJob.remove();
+        }
         const deleted = await Cust.findOneAndDelete({
             _id : id,
             workspace : workspaceId

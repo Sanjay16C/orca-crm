@@ -55,6 +55,10 @@ const CustSchema = new Schema(
             type : Schema.Types.ObjectId,
             ref : "Workspace",
             required : true
+        },
+        nextFollowupJobId : {
+            type : String,
+            default : null
         }
     },
     {
