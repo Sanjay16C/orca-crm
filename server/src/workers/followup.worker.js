@@ -12,9 +12,12 @@ const followupWorker = new Worker(
             user.email,
             "CRM Follow-up Reminder",
             `Customer: ${job.data.customerName}
-             Priority: ${job.data.customerPriority}
-             Please contact this customer today.`
+            Priority: ${job.data.customerPriority}
+            Please contact this customer today.`
         );
+        console.log(`Customer: ${job.data.customerName}
+            Priority: ${job.data.customerPriority}
+            Please contact this customer today.`);
     },
     {
         connection : {
