@@ -64,6 +64,7 @@ const Home = () => {
 
     useEffect(()=>{
         getMembership();
+        // eslint-disable-next-line 
     },[workspaceId]);
     return (
         <div className="home">
