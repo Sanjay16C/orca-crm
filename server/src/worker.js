@@ -1,6 +1,6 @@
-import "../src/workers/followup.worker.js"
 import { connectDB } from "./config/database.js";
 import dotenv from "dotenv";
+import { logger } from "./utils/logger.js";
 dotenv.config({
     path : "./.env"
 });
@@ -8,10 +8,11 @@ dotenv.config({
 const startWorker = async() =>{
     try {
         await connectDB();
-        console.log("Worker Started");
+        await import("../src/workers/followup.worker.js");
+        logger.info("Worker Started");
         
     } catch (error) {
-        console.log("Worker Failed to run",error.message);
+        logger.error(`Worker Failed to run: ${error.message}`);
     }
 }
 

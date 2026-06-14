@@ -1,11 +1,12 @@
 import { Worker } from "bullmq";
 import { User } from "../models/user.model.js";
 import { sendMail } from "../utils/sendMail.js";
+import { logger } from "../utils/logger.js";
 
 const followupWorker = new Worker(
     "followup-reminders",
     async(job)=>{
-        console.log(`Followup for ${job.data.customerName}`);
+        logger.info(`Followup for ${job.data.customerName}`);
         const user = await User.findById(job.data.assignedTo);
         if(!user) return;
         await sendMail(
@@ -15,7 +16,7 @@ const followupWorker = new Worker(
             Priority: ${job.data.customerPriority}
             Please contact this customer today.`
         );
-        console.log(`Customer: ${job.data.customerName}
+        logger.info(`Customer: ${job.data.customerName}
             Priority: ${job.data.customerPriority}
             Please contact this customer today.`);
     },
@@ -28,8 +29,8 @@ const followupWorker = new Worker(
 );
 
 followupWorker.on("completed",(job)=>{
-    console.log(`Job ${job.id} completed`);
+    logger.info(`Job ${job.id} completed`);
 });
 followupWorker.on("failed",(job,error)=>{
-    console.log(`Job ${job.id} failed`,error.message);
+    logger.info(`Job ${job.id} failed`,error.message);
 });

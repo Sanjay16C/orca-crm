@@ -6,6 +6,8 @@ import custRouter from "./routes/customer.route.js";
 import dotenv from "dotenv";
 import passport from "./config/passport.js";
 import workspaceRouter from "./routes/workspace.route.js";
+import morgan from "morgan";
+import winston from "winston";
 
 dotenv.config({
     path : "./.env"
@@ -13,6 +15,7 @@ dotenv.config({
 
 const app = express();
 app.set("trust proxy", 1);
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors({
     origin : `${process.env.ORIGIN_URL}`,
