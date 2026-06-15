@@ -10,6 +10,15 @@ const Home = () => {
     const navigate = useNavigate();
     const {workspaceId} = useParams();
     const [role,setRole] = useState("member");
+    const [profilePicture,setProfilePicture] = useState(userprofile);
+    const fetchProfilePicture = async() =>{
+        try {
+            const response = await api.get("/auth/fetchProfilePic");
+            setProfilePicture(response.data.imageUrl || userprofile);
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const handleLogout = async() =>{
         const isConfirm = window.confirm("Click OK to Logout");
         if(isConfirm){
@@ -66,6 +75,9 @@ const Home = () => {
         getMembership();
         // eslint-disable-next-line 
     },[workspaceId]);
+    useEffect(()=>{
+        fetchProfilePicture();
+    },[]);
     return (
         <div className="home">
             <div className={sidebaropen ? "sidebar" : "sidebar-close"}>
@@ -97,8 +109,10 @@ const Home = () => {
                            {currentPage.charAt(0).toUpperCase()+currentPage.slice(1)}
                         </div>
                         <div className="nav-right">
-                            <button className="userprofile-btn">
-                                <img className="userprofile-img" src={userprofile} alt="profile" />
+                            <button className="userprofile-btn"
+                                onClick={()=>navigate(`/workspace/${workspaceId}/settings`)}
+                            >
+                                <img className="userprofile-img" src={profilePicture} alt="profile" />
                             </button>
                             <button className="logout-btn"
                                 onClick={()=>handleLogout()}

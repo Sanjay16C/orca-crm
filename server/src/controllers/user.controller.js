@@ -6,6 +6,9 @@ import { sendMail } from "../utils/sendMail.js";
 import { Verification } from "../models/verification.model.js";
 import { WorkspaceMember } from "../models/workspaceMember.model.js";
 import { redisClient } from "../config/redis.js";
+import { logger } from "../utils/logger.js";
+import { uploadToCloudinary } from "../utils/uploadCloudinary.js";
+
 
 const signup = async(req,res) => {
     try {
@@ -296,6 +299,46 @@ const verificationStatus = async(req,res) =>{
     }
 }
 
+const uploadProfilePicture = async(req,res) =>{
+    try {
+        if(!req.file) return res.status(404).json({
+            message : "No file found"
+        })
+        const result = await uploadToCloudinary(req.file.buffer);
+        console.log(result.secure_url);
+        const user = await User.findById(req.user.id);
+        if(!user) return res.status(404).json({
+            message : "User Not Found"
+        })
+        user.profilePicture = result.secure_url;
+        await user.save();
+        res.status(200).json({
+            imageUrl : user.profilePicture
+        })
+    } catch (error) {
+        logger.error(error.message);
+        res.status(500).json({
+            message : "Internal server error"
+        });
+    }
+}
+const fetchProfilePicture = async(req,res) =>{
+    try {
+        const user = await User.findById(req.user.id);
+        if(!user) return res.status(404).json({
+            message : "User Not Found"
+        })
+        res.status(200).json({
+            imageUrl : user.profilePicture
+        })
+    } catch (error) {
+        logger.error(error.message);
+        res.status(500).json({
+            message : "Internal server error"
+        });
+    }
+}
+
 export {
     signup,
     login,
@@ -307,5 +350,7 @@ export {
     googleCallback,
     verifyMail,
     verifyMailToken,
-    verificationStatus
+    verificationStatus,
+    uploadProfilePicture,
+    fetchProfilePicture
 }

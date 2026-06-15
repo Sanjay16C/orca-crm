@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { fetchUsersInWorkspaces, forgotPassword, googleCallback, login, logout, refreshAccessToken, resetPassword, signup, verificationStatus, verifyMail, verifyMailToken } from "../controllers/user.controller.js";
+import { fetchProfilePicture, fetchUsersInWorkspaces, forgotPassword, googleCallback, login, logout, refreshAccessToken, resetPassword, signup, uploadProfilePicture, verificationStatus, verifyMail, verifyMailToken } from "../controllers/user.controller.js";
 import {authMiddleware} from "../middlewares/auth.middleware.js";
 import { loginValidation, signupValidation, verifyMailValidation } from "../middlewares/validation.middleware.js";
 import passport from "passport";
 import { authLimiter } from "../middlewares/rateLimit.middleware.js";
 import { requireRole } from "../middlewares/requireRole.middleware.js";
+import { upload } from "../middlewares/upload.middleware.js";
 
 const userRouter = Router();
 
@@ -27,5 +28,7 @@ userRouter.get(
 userRouter.post("/verify-mail",verifyMailValidation,verifyMail);
 userRouter.get("/verify-mail/:token",verifyMailToken);
 userRouter.get("/verification-status/:email",verificationStatus);
+userRouter.patch("/profilepic-upload",authMiddleware,upload.single("profilePicture"),uploadProfilePicture);
+userRouter.get("/fetchProfilePic",authMiddleware,fetchProfilePicture);
 
 export default userRouter;

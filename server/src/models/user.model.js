@@ -22,7 +22,11 @@ const UserSchema = new Schema(
         refreshToken : {type : String },
         resetPasswordToken : {type : String},
         resetPasswordExpiry : {type : Date},
-        googleId : { type : String}
+        googleId : { type : String},
+        profilePicture : {
+            type : String,
+            default : ""
+        }
     },
     {
         timestamps:true

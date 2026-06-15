@@ -1,6 +1,9 @@
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api/axios.js";
 import { useEffect, useState } from "react";
+import "./Settings.css";
+import userprofile from "../assets/spider.png";
+import { useRef } from "react";
 
 const Settings = () => {
     const {workspaceId} = useParams();
@@ -8,6 +11,28 @@ const Settings = () => {
     const [myRole,setMyRole] = useState("");
     const [deleteModal,setDeleteModal] = useState(false);
     const [confirm,setConfirm] = useState("");
+    const [profilePicture,setProfilePicture] = useState(userprofile);
+    const fileInputRef = useRef(null);
+    const uploadProfilePicture = async(file) =>{
+        try {
+            if(!file) return;
+            const formData = new FormData();
+            formData.append("profilePicture",file);
+            const response = await api.patch("/auth/profilepic-upload",formData);
+            setProfilePicture(response.data.imageUrl || userprofile);
+            window.location.reload();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const fetchProfilePicture = async() =>{
+        try {
+            const response = await api.get("/auth/fetchProfilePic");
+            setProfilePicture(response.data.imageUrl || userprofile);
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const DeleteWorkspace = async() =>{
         try {
             if(confirm!=="CONFIRM"){
@@ -34,13 +59,28 @@ const Settings = () => {
     }
     useEffect(()=>{
             fetchRole();
+            fetchProfilePicture();
             // eslint-disable-next-line
         },[workspaceId]);
     return (
         <div className="settings">
-            {
-                myRole !== "owner" && <h1>WORK IN PROGRESS</h1>
-            }
+            <div className="profile-pic">
+                
+                    <img 
+                        src={profilePicture}
+                        alt="profilePic"
+                        onClick={()=>fileInputRef.current.click()}
+                    />
+
+                
+            </div>
+            <input 
+                type="file"
+                ref={fileInputRef}
+                style={{display:"none"}}
+                accept="image/*"
+                onChange={(e)=>uploadProfilePicture(e.target.files[0])}
+            />
             {
                 myRole === "owner" &&
                 <div className="delete-workspace">
