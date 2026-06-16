@@ -12,6 +12,7 @@ const Settings = () => {
     const [deleteModal,setDeleteModal] = useState(false);
     const [confirm,setConfirm] = useState("");
     const [profilePicture,setProfilePicture] = useState(userprofile);
+    const [workspaceCode,setWorkspaceCode] = useState("");
     const fileInputRef = useRef(null);
     const uploadProfilePicture = async(file) =>{
         try {
@@ -31,6 +32,15 @@ const Settings = () => {
             setProfilePicture(response.data.imageUrl || userprofile);
         } catch (error) {
             console.log(error);
+        }
+    }
+    const handleWorkspaceCodeRotation = async() =>{
+        try {
+            const response = await api.patch(`/workspace/rotateCode`,{workspaceId});
+            setWorkspaceCode(response.data.new_code || "");
+        } catch (error) {
+            console.log(error);
+            alert(error.response?.data?.message)
         }
     }
     const DeleteWorkspace = async() =>{
@@ -57,22 +67,28 @@ const Settings = () => {
             console.log(error);
         }
     }
+    const fetchWorkspaceCode = async() =>{
+        try {
+            const response = await api.get(`/workspace/fetchWCode/${workspaceId}`);
+            setWorkspaceCode(response.data.code || "");
+        } catch (error) {
+            console.log(error);
+        }
+    }
     useEffect(()=>{
             fetchRole();
             fetchProfilePicture();
+            fetchWorkspaceCode();
             // eslint-disable-next-line
         },[workspaceId]);
     return (
         <div className="settings">
             <div className="profile-pic">
-                
-                    <img 
-                        src={profilePicture}
-                        alt="profilePic"
-                        onClick={()=>fileInputRef.current.click()}
-                    />
-
-                
+                <img 
+                    src={profilePicture}
+                    alt="profilePic"
+                    onClick={()=>fileInputRef.current.click()}
+                />
             </div>
             <input 
                 type="file"
@@ -81,6 +97,18 @@ const Settings = () => {
                 accept="image/*"
                 onChange={(e)=>uploadProfilePicture(e.target.files[0])}
             />
+            <div className="workspace-code">
+                { myRole !== "member" &&
+                    <div className="code">
+                    {workspaceCode}
+                    </div>
+                }
+                { myRole === "owner" &&
+                    <button onClick={()=>handleWorkspaceCodeRotation()}
+                        className="rotate-btn"
+                    >🔁</button>
+                }
+                </div>
             {
                 myRole === "owner" &&
                 <div className="delete-workspace">

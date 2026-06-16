@@ -4,11 +4,17 @@ import { User } from "../models/user.model.js";
 import { WorkspaceMember } from "../models/workspaceMember.model.js";
 import { Cust } from "../models/cust.model.js";
 import { redisClient } from "../config/redis.js";
+import { logger } from "../utils/logger.js";
 
 const createWorkspace = async(req,res) =>{
     try {
         const {name} = req.body;
-        const code = crypto.randomBytes(3).toString("hex").toUpperCase();
+        let exist = true;
+        let code;
+        while(exist){
+            code = crypto.randomBytes(3).toString("hex").toUpperCase();
+            exist = await Workspace.findOne({code});
+        }
         const workspace = await Workspace.create({
             name,
             code,
@@ -178,6 +184,18 @@ const removeMember = async(req,res) =>{
         })
         await membership.deleteOne();
         await redisClient.del(`members:${workspaceId}`);
+        const workspace = await Workspace.findById(workspaceId);
+        if(!workspace) return res.status(404).json({
+            message : "Workspace Not Found"
+        });
+        let exist = true;
+        let code;
+        while(exist){
+            code = crypto.randomBytes(3).toString("hex").toUpperCase();
+            exist = await Workspace.findOne({code});
+        }
+        workspace.code = code;
+        await workspace.save();
         res.status(200).json({
             message : "Removed Member successfully"
         })
@@ -219,6 +237,50 @@ const deleteWorkspace = async(req,res) =>{
     }
 }
 
+const rotateWorkspaceCode = async(req,res) =>{
+    try {
+        const {workspaceId} = req.body;
+        const workspace = await Workspace.findById(workspaceId);
+        if(!workspace) return res.status(404).json({
+            message : "Workspace Not Found"
+        })
+        let exist = true;
+        let new_code;
+        while(exist){
+            new_code = crypto.randomBytes(3).toString("hex").toUpperCase();
+            exist = await Workspace.findOne({code:new_code});
+        }
+        workspace.code = new_code;
+        await workspace.save();
+        res.status(200).json({
+            message : "Workspace Code Changed Successfully" , new_code
+        });
+    } catch (error) {
+        logger.error(error.message);
+        res.status(500).json({
+            message : "Internal Server Error"
+        });
+    }
+}
+
+const fetchWCode = async(req,res) =>{
+    try {
+        const {workspaceId} = req.params;
+        const workspace = await Workspace.findById(workspaceId);
+        if(!workspace) return res.status(404).json({
+            message : "Workspace Not Found"
+        })
+        res.status(200).json({
+            message : "Code fetched successfully" , code : workspace.code
+        })
+    } catch (error) {
+        logger.error(error.message);
+        res.status(500).json({
+            message : "Internal Server Error"
+        });
+    }
+}
+
 export{
     createWorkspace,
     getMyWorkspace,
@@ -227,5 +289,7 @@ export{
     updateRole,
     getMembership,
     removeMember,
-    deleteWorkspace
+    deleteWorkspace,
+    rotateWorkspaceCode,
+    fetchWCode
 };
