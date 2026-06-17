@@ -1,0 +1,38 @@
+services : 
+  orca-crm-client :
+    build : ./client
+    ports : 
+      - 3000:3000
+    env_file : 
+      - ./client/.env
+    
+  orca-crm-server :
+    build : ./server
+    ports : 
+      - 8000:8000
+    env_file : 
+      - ./server/.env
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - redis
+
+  orca-crm-worker : 
+    build : ./server
+    command : npm run worker
+    env_file :
+      - ./server/.env
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      - redis
+  
+  redis : 
+    image : redis
+    
+    
+    
