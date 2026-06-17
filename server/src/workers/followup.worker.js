@@ -3,6 +3,14 @@ import { User } from "../models/user.model.js";
 import { sendMail } from "../utils/sendMail.js";
 import { logger } from "../utils/logger.js";
 
+const redisConnection =
+  process.env.NODE_ENV === "production"
+    ? { url: process.env.REDIS_URL }
+    : {
+        host: process.env.REDIS_HOST || "127.0.0.1",
+        port: Number(process.env.REDIS_PORT) || 6379
+      };
+
 const followupWorker = new Worker(
     "followup-reminders",
     async(job)=>{
@@ -21,10 +29,7 @@ const followupWorker = new Worker(
             Please contact this customer today.`);
     },
     {
-        connection: {
-            host: process.env.REDIS_HOST || "127.0.0.1",
-            port: Number(process.env.REDIS_PORT) || 6379
-        }
+        connection: redisConnection
     }
 );
 
