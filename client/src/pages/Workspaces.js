@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios.js";
 import { useNavigate } from "react-router-dom";
+import logout from "../assets/app-icons/logout.png";
+import "./Workspaces.css";
 
 const Workspaces = () => {
     const [workspaces,setWorkspaces] = useState([]);
@@ -9,6 +11,20 @@ const Workspaces = () => {
     const [code,setCode] = useState("");
     const [searchedWorkspace,setSearchedWorkspace] = useState({});
     const navigate = useNavigate();
+    const handleLogout = async() =>{
+        const isConfirm = window.confirm("Click OK to Logout");
+        if(isConfirm){
+            try {
+                await api.post("/auth/logout");
+            } catch (error) {
+                console.log(error);
+            } finally {
+                localStorage.removeItem("accessToken");
+                navigate("/");
+            }
+            
+        }
+    }
     const handleClick = (workspaceId) =>{
         navigate(`/workspace/${workspaceId}`);
     }
@@ -50,9 +66,16 @@ const Workspaces = () => {
     },[]);
     return (
         <div className="workspaces">
+            <div className="w-navbar">
+                <button className="logout-btn"
+                    onClick={()=>handleLogout()}
+                >
+                <img className="logout-img" src={logout} alt="logout" />
+                </button>
+            </div>
+            <div className="not-navbar">
             <h1>Workspaces</h1>
-            
-            <button
+            <button className="w-btn"
                 onClick={()=>setModal(true)}
             >Create Workspace</button>
             {modal && 
@@ -69,9 +92,11 @@ const Workspaces = () => {
                 </div>
             }
             <h1>List</h1>
+            <div className="workspaces-list">
             {
                 workspaces.map((workspace)=>(
                     <button
+                        className="workspace-btn"
                         onClick={()=>handleClick(workspace._id)}
                         key={workspace._id}
                     >
@@ -84,17 +109,21 @@ const Workspaces = () => {
                     
                 ))
             }
+            </div>
             <input 
                 placeholder="Search Workspace"
                 onChange={(e)=>setCode(e.target.value)}
                 value={code}
             />
-            <button onClick={()=>searchWorkspace()}>Search</button>
+            <button onClick={()=>searchWorkspace()}
+                    className="w-btn"
+                >Search</button>
             <button 
                 onClick={()=>{
                     setCode("");
                     setSearchedWorkspace({});
                 }}
+                className="w-btn"
             >Clear</button>
             {
                 searchedWorkspace._id && 
@@ -105,7 +134,7 @@ const Workspaces = () => {
                     <button onClick={()=>joinWorkspace(searchedWorkspace._id)}>JOIN</button>
                 </div>
             }
-            
+            </div>  
         </div>
 
      );
