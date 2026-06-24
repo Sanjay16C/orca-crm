@@ -101,9 +101,9 @@ const Workspaces = () => {
                         key={workspace._id}
                     >
                         <div className="workspace">
-                            <h3>{workspace.name}</h3>
-                            <h5>CODE : {workspace.code}</h5>
-                            <h5>OWNER : {workspace.owner.username}</h5>
+                            <h3 className="workspace-name">{workspace.name}</h3>
+                            <h5 className="workspace-details">CODE : {workspace.code}</h5>
+                            <h5 className="workspace-details">OWNER : {workspace.owner.username}</h5>
                         </div>
                     </button>
                     
@@ -127,11 +127,13 @@ const Workspaces = () => {
             >Clear</button>
             {
                 searchedWorkspace._id && 
-                <div className="workspace">
-                    <h3>{searchedWorkspace.name}</h3>
-                    <h5>CODE : {searchedWorkspace.code}</h5>
-                    <h5>OWNER : {searchedWorkspace?.owner?.username}</h5>
-                    <button onClick={()=>joinWorkspace(searchedWorkspace._id)}>JOIN</button>
+                <div className="searched-workspace">
+                    <h3 className="workspace-name">{searchedWorkspace.name}</h3>
+                    <h5 className="workspace-details">CODE : {searchedWorkspace.code}</h5>
+                    <h5 classname="workspace-details">OWNER : {searchedWorkspace?.owner?.username}</h5>
+                    <button 
+                    className="w-btn"
+                    onClick={()=>joinWorkspace(searchedWorkspace._id)}>JOIN</button>
                 </div>
             }
             </div>  

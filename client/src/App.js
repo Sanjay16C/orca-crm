@@ -10,7 +10,7 @@ import Customers from './pages/Customers.js';
 import Dashboard from './pages/Dashboard.js';
 import Calendar from './pages/Calendar.js';
 import Team from './pages/Team.js';
-import Analytics from './pages/Analytics.js';
+import Tasks from './pages/Tasks.js';
 import Settings from './pages/Settings.js';
 import ForgotPass from './pages/auth/ForgotPass.js';
 import ResetPass from './pages/auth/ResetPass.js';
@@ -69,9 +69,9 @@ function App() {
                       <Team />
                     </Protectedroute>
                   }/>
-                  <Route path="analytics" element={
+                  <Route path="tasks" element={
                     <Protectedroute>
-                      <Analytics />
+                      <Tasks />
                     </Protectedroute>
                   }/>
                   <Route path="settings" element={

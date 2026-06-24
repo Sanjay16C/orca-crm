@@ -62,8 +62,8 @@ const Home = () => {
         path:"team"
     },
     {
-        name:"Analytics",
-        path:"analytics"
+        name:"Tasks",
+        path:"tasks"
     },
     {
         name:"Settings",
